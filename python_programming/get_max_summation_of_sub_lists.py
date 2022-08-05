@@ -13,6 +13,7 @@ def solution(T):
     temp_val_list.append(sum(T[res * 2:res * 3]))
     temp_val_list.append(sum(T[res * 3:res * 4]))
     print(season_list[temp_val_list.index(max(temp_val_list))])
+    print(season_list[temp_val_list.index(max(temp_val_list))])
 
 
 solution(T)

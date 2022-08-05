@@ -1,4 +1,3 @@
-import flask_sqlalchemy
 from flask_sqlalchemy import xrange
 
 A = [4, 5, 6, 3, 2, 4]
