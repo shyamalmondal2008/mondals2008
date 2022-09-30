@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  normalizingplaylist:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      CodeUri: .
+      Description: ''
+      MemorySize: 128
+      Timeout: 123
+      Role: >-
+        arn:aws:iam::<12_DIGIT_IAM_ID>:role/service-role/<role_name>
+      Environment:
+        Variables:
+          NORMALIZATION_MAX: '100'
+          V_AWS_ACCESS_KEY_ID: <Access Key>
+          V_AWS_SECRET_ACCESS_KEY: <Secret Key>
+      Layers:
+        - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:pandas:1'
+        - >-
+          arn:aws:lambda:eu-north-1:642425348156:layer:AWSLambda-Python38-SciPy1x:107
+        - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:sklearn:10'
+        - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:numpy:2'
+        - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:threadpoolctl:2'
