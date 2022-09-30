@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  buildrestapipythonflask:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      CodeUri: .
+      Description: ''
+      MemorySize: 128
+      Timeout: 123
+      Role: >-
+        arn:aws:iam::<12_DIGIT_IAM_ID>:role/service-role/<role_name>
+      Layers:
+        - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:serverless_wsgi:1'
+        - >-
+          arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:markupsafe_jinja2_werkzeug_click:1
+        - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:flask_itsdangerous:1'
+        - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:flask_lambda:1'
