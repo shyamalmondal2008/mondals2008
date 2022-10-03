@@ -104,6 +104,10 @@ ORDER BY tracks_count DESC limit 1;
 
 ----- Select multiple sub-queries data into a single query and create a new table
 CREATE TABLE  playlist_tracks_stats
+WITH (
+format = 'TEXTFILE',
+external_location = 's3://assignment-bucket-sep-2022/output/playlist_tracks_stats'
+)
 AS
 SELECT
 (SELECT COUNT(*) as number_of_playlist
@@ -138,6 +142,7 @@ FROM playlist_tracks
 WHERE playlist_id NOT IN ('(1022898 rows)','playlist_id')
 GROUP BY playlist_id) e
 ORDER BY tracks_count DESC limit 1) AS maximum_tracks_of_all_playlists
+;
 
 
 
