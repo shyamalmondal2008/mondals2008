@@ -13,10 +13,14 @@ Resources:
       Timeout: 303
       Role: >-
         arn:aws:iam::<12_DIGIT_IAM_ID>:role/service-role/normalizing_playlist-role-50ip291o
+      Environment:
+        Variables:
+          V_AWS_ACCESS_KEY_ID: <Access Key>
+          V_AWS_SECRET_ACCESS_KEY: <Secret Key>
       Layers:
         - >-
           arn:aws:lambda:eu-north-1:642425348156:layer:AWSLambda-Python38-SciPy1x:107
         - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:pandas:1'
-        - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:sklearn:10'
         - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:threadpoolctl:2'
         - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:numpy:2'
+        - 'arn:aws:lambda:eu-north-1:<12_DIGIT_IAM_ID>:layer:jsonpickle:1'
