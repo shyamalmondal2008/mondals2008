@@ -11,9 +11,9 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Invoke Step 1 & Step2
-step1 = normalizing_playlist()
-step2 = playlist_tracking_stats()
+#step1 = normalizing_playlist()
+#step2 = playlist_tracking_stats()
+
 
 @app.route('/<bucket_name>', methods=['GET'])
 def get_all_list_items():
@@ -26,12 +26,13 @@ def get_max_list_items(max_value):
         return max_items
 
 
-@app.route('/<bucket_name>/playlist/<playlist_id>', methods=['GET'])
+@app.route('/<bucket_name>/<key_name>/<playlist_id>', methods=['GET'])
 def get_specific_playlist(playlist_id):
     key = {'playlist_id': playlist_id}
     if request.method == 'GET':
-        playlist = lambda_handler[playlist_id]
-        if playlist:
+        new_playlist = lambda_handler[playlist_id]
+        print('value of new playlist is',new_playlist)
+        if new_playlist:
             return lambda_handler[playlist_id]
         else:
             return lambda_handler({"message": "playlist not found"}, 404)
@@ -41,8 +42,8 @@ def get_specific_playlist(playlist_id):
 def get_track_playlist(playlist_id):
     key = {'playlist_id': playlist_id}
     if request.method == 'GET':
-        playlist = lambda_handler[playlist_id]
-        if playlist:
+        new_playlist = lambda_handler[playlist_id]
+        if new_playlist:
             return lambda_handler[playlist_id]
         else:
             return lambda_handler({"message": "playlist not found"}, 404)
@@ -60,9 +61,9 @@ def lambda_handler(event, context):
     json_data = []
 	
 	
-    bucket_name = event ["pathParameters"]["bucket"]
-    key_name = event ["queryStringParameters"]["file"]
-    #playlist_id = event ["queryStringParameters"]["in_playlist_id"]
+    bucket_name = event["pathParameters"]["bucket"]
+    key_name = event["queryStringParameters"]["file"]
+    playlist_id = event["queryStringParameters"]["playlist"]
 	
     s3_object = s3.get_object(Bucket=bucket_name, Key=key_name)
 	
@@ -74,27 +75,29 @@ def lambda_handler(event, context):
     
     with open(filename_csv) as csv_data:
         csv_reader = csv.DictReader(csv_data)
+      #  print('value of csv_reader...',csv_reader)
         for csv_row in csv_reader:
+           # print('.......test......',csv_row)
             json_data.append(csv_row)
-            
+    #print('the value of json_data is......',json_data)
+    
+    '''      
     with open(filename_json, 'w') as json_file:
         json_file.write(json.dumps(json_data))
     
     with open(filename_json, 'r') as json_file_contents:
         response = s3.put_object(Bucket=bucket_name, Key=keyname_s3, Body=json_file_contents.read())
-    
-    #json_dumps = json.dumps('{bucket}/{key}'.format(bucket=bucket_name,key=keyname_s3))
-    #file_content = json_dumps.read()
+    '''
 
     return {
         "statusCode": 200,
-        "headers": {
-        "Content-Type": "application/json",
-        "Content-Disposition": "attachment; filename={}".format(keyname_s3)
-         },
-        "body": json.dumps(json_data),
-        "isBase64Encoded": True
+       # "headers": {
+       #    "Content-Type": "application/json",
+       # "Content-Disposition": "attachment; filename={}".format(keyname_s3)
+       # },
+        "body": json.dumps(json_data)
+      #  ,"isBase64Encoded": True
     }
-    
+     
     os.remove(filename_csv)
     os.remove(filename_json)
