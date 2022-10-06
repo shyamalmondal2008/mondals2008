@@ -10,7 +10,7 @@ Resources:
       CodeUri: .
       Description: ''
       MemorySize: 128
-      Timeout: 123
+      Timeout: 483
       Role: >-
         arn:aws:iam::<12_DIGIT_IAM_ID>:role/service-role/<role_name>
       Layers:
