@@ -5,6 +5,7 @@ import base64
 import os
 import datetime as dt
 import flask
+# import pandas as pd
 # from flask_lambda import FlaskLambda
 from flask import Flask, request, jsonify
 
@@ -70,15 +71,18 @@ def lambda_handler(event, context):
     data = s3_object["Body"].read()
     contents = data.decode('utf-8')
     
+
+    
     with open(filename_csv, 'a') as csv_data:
         csv_data.write(contents)
     
     with open(filename_csv) as csv_data:
         csv_reader = csv.DictReader(csv_data)
-      #  print('value of csv_reader...',csv_reader)
+        print('value of csv_reader...',csv_reader)
         for csv_row in csv_reader:
-           # print('.......test......',csv_row)
+            print('.......test......',csv_row)
             json_data.append(csv_row)
+  
     #print('the value of json_data is......',json_data)
     
     '''      
@@ -87,17 +91,37 @@ def lambda_handler(event, context):
     
     with open(filename_json, 'r') as json_file_contents:
         response = s3.put_object(Bucket=bucket_name, Key=keyname_s3, Body=json_file_contents.read())
+        
     '''
-
-    return {
+    json_body=json.dumps(json_data)
+    print('json body.....', json_body)
+    
+    json_load=json.loads(json_body)
+    print('json loads .....',json_load)
+   
+    # Soln 1 hardcoded field name
+    ''' 
+    dic = { x['playlist_id']: x['playlist_name'] for x in json_load}
+    print('--------value of d.........', dic[playlist_id])
+    print('playlist_id:{} ,playlist_name:{}'.format(playlist_id,dic[playlist_id]))
+    '''
+    # Sol 2 w/o hardcoding filed name
+    dict_op = list(filter(lambda playlist_op : playlist_op['playlist_id']==playlist_id, json_load))
+    print('value of dict_op ......',dict_op)
+    
+    
+    if playlist_id in json_body:
+        return {
         "statusCode": 200,
-       # "headers": {
-       #    "Content-Type": "application/json",
-       # "Content-Disposition": "attachment; filename={}".format(keyname_s3)
-       # },
-        "body": json.dumps(json_data)
-      #  ,"isBase64Encoded": True
-    }
+        # "headers": {
+        #    "Content-Type": "application/json",
+        # "Content-Disposition": "attachment; filename={}".format(keyname_s3)
+        # },
+          "body": json.dumps(dict_op)
+        #  ,"isBase64Encoded": True
+            }
+    else: 
+        return 'Unrecognized Playlist ID'
      
     os.remove(filename_csv)
     os.remove(filename_json)
